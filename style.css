@@ -398,3 +398,261 @@ kbd {
     transform: none;
   }
 }
+
+/* El overlay cubre todo el wrapper: la cabecera se mantiene por encima para que
+   el cambio de tema siga disponible en la pantalla de inicio y en el game over. */
+.masthead {
+  position: relative;
+  z-index: 2;
+}
+
+#overlay-records:empty {
+  display: none;
+}
+
+/* ---- Records locales ---- */
+.records-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.records-row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  transition: background var(--duration-fast) var(--easing-brand),
+              border-color var(--duration-fast) var(--easing-brand);
+}
+
+/* La fila recién guardada: acento sutil + borde de marca, nunca sombra gris. */
+.records-row.is-current {
+  background: var(--accent-subtle);
+  border-color: var(--border-accent);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.records-pos {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.records-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.records-score {
+  color: var(--accent-text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* La fecha solo cabe en las tablas anchas (inicio y game over). */
+.records-date {
+  display: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.records-empty {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.records-table {
+  width: 100%;
+  min-width: 260px;
+}
+
+.records-table .records-row {
+  grid-template-columns: 20px minmax(0, 1fr) auto auto;
+  font-size: 15px;
+  padding: 6px 10px;
+}
+
+.records-table .records-date {
+  display: block;
+}
+
+.records-stats {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.records-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.records-stat .label {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.records-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.ghost-btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--easing-brand),
+              border-color var(--duration-fast) var(--easing-brand);
+}
+
+.ghost-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.ghost-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* ---- Guardar puntuación en el game over ---- */
+.save-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.save-row.hidden {
+  display: none;
+}
+
+.save-note {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.save-controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* El body usa user-select: none; el campo de nombre tiene que ser escribible. */
+#player-name {
+  user-select: text;
+  -webkit-user-select: text;
+  font-family: inherit;
+  font-size: 15px;
+  height: 40px;
+  width: 160px;
+  padding: 0 12px;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--easing-brand),
+              box-shadow var(--duration-fast) var(--easing-brand);
+}
+
+#player-name::placeholder {
+  color: var(--text-muted);
+}
+
+#player-name:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+
+/* ---- Pantalla de inicio ---- */
+.start-title {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.start-sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+/* ---- Botón primario compartido (Jugar / Guardar) ---- */
+.btn-primary {
+  height: 40px;
+  padding: 0 24px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: box-shadow var(--duration-base) var(--easing-brand),
+              transform var(--duration-base) var(--easing-brand);
+}
+
+.btn-primary:hover {
+  box-shadow: var(--glow);
+  transform: translateY(-2px);
+}
+
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+#play-btn {
+  margin-top: 8px;
+}
+
+#start-overlay .ghost-btn {
+  align-self: center;
+}
+
+@media (max-width: 640px) {
+  .records-table {
+    min-width: 0;
+  }
+
+  .overlay-box {
+    padding: 24px 20px;
+    width: calc(100% - 32px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover {
+    transform: none;
+  }
+}

@@ -34,10 +34,15 @@ Three files, no framework, no bundler:
 | Ghost piece | `ghostY()` — projects current piece down until collision; drawn at `globalAlpha = 0.22` |
 | Theming | `html.light-mode` class, applied pre-paint by an inline script in `index.html`; `isLight()` reads it, `applyTheme()` swaps `palette` between `COLORS_DARK`/`COLORS_LIGHT` |
 | State flags | `paused`, `gameOver`, `animId` (RAF handle) |
+| Records storage | `tetris-records` in `localStorage` — `{ scores: [{name, score, lines, level, date}], bestCombo, maxLines }`; `loadRecords()` validates/sorts/truncates to top 5 and degrades to `emptyRecords()` on corrupt JSON, `saveRecords()` writes (both `try/catch`) |
+| Records UI | `renderRecords(data)` fills the sidebar card (`#records-list`), the start screen (`#start-records`) and the game-over overlay (`#overlay-records`) from one `recordsMarkup()`; `latestIndex()` picks the newest entry, marked `.is-current` |
+| Score entry | `qualifiesForTop()` gates the `#save-row` input (`#player-name`, max 12 chars); `saveCurrentScore()` inserts, re-sorts (`byScore`), truncates and highlights the inserted row; `clearRecords()` (`#clear-records-btn`, on the start screen) wipes after `confirm()` |
+| Combo / max lines | `combo` increments in `lockPiece()` when `clearLines()` returns > 0 and resets to 0 otherwise; `comboMax` is the per-game peak. `persistStats()` writes `bestCombo`/`maxLines` both in `endGame()` and at the top of `init()`, so a restart mid-game doesn't lose them |
+| Start screen | `#start-overlay` shown by `showStart()` on load — `init()` no longer runs automatically; “Jugar” (`#play-btn`) and “Jugar de nuevo” both call `init()`. `started` flag gates keyboard input; `drawBoardOnly()` repaints the board with no active piece |
 
 ### Game flow
 
-`init()` → `spawn()` → `requestAnimationFrame(loop)`. Each frame: accumulate dt → auto-drop or `lockPiece()` → `draw()`. `lockPiece()` = `merge()` + `clearLines()` + `spawn()`. If `spawn()` immediately collides → `endGame()`.
+`showStart()` (start screen) → `init()` → `spawn()` → `requestAnimationFrame(loop)`. Each frame: accumulate dt → auto-drop or `lockPiece()` → `draw()`. `lockPiece()` = `merge()` + `clearLines()` + `spawn()`. If `spawn()` immediately collides → `endGame()`.
 
 ## Tunable constants (top of game.js)
 

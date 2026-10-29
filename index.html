@@ -60,6 +60,21 @@
             <li><kbd>P</kbd> <span>Pausa</span></li>
           </ul>
         </div>
+
+        <div class="card records" id="records-card">
+          <span class="label">Records</span>
+          <div id="records-list" class="records-compact"></div>
+          <div class="records-stats">
+            <div class="records-stat">
+              <span class="label">Mejor combo</span>
+              <span class="records-stat-value" id="best-combo">0</span>
+            </div>
+            <div class="records-stat">
+              <span class="label">Líneas máx.</span>
+              <span class="records-stat-value" id="max-lines">0</span>
+            </div>
+          </div>
+        </div>
       </aside>
     </div>
 
@@ -68,7 +83,30 @@
       <div class="overlay-box">
         <p id="overlay-title">Game over</p>
         <p id="overlay-score"></p>
+
+        <div id="save-row" class="save-row hidden">
+          <label class="save-note" id="save-note" for="player-name">¡Entraste al top 5! Escribe tu nombre</label>
+          <div class="save-controls">
+            <input id="player-name" type="text" maxlength="12" placeholder="Tu nombre"
+                   autocomplete="off" spellcheck="false" />
+            <button id="save-score-btn" class="btn-primary">Guardar</button>
+          </div>
+        </div>
+
+        <div id="overlay-records" class="records-table"></div>
+
         <button id="restart-btn">Jugar de nuevo</button>
+      </div>
+    </div>
+
+    <div id="start-overlay" class="overlay">
+      <div class="particles" aria-hidden="true"></div>
+      <div class="overlay-box">
+        <p class="start-title">Tetris</p>
+        <p class="start-sub">Mejores puntuaciones</p>
+        <div id="start-records" class="records-table"></div>
+        <button id="play-btn" class="btn-primary">Jugar</button>
+        <button id="clear-records-btn" class="ghost-btn">Borrar records</button>
       </div>
     </div>
   </div>
