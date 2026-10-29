@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris · Bambú Tech Services</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Tema antes del primer pintado: evita el fundido de oscuro a claro al cargar.
+    try {
+      if (localStorage.getItem('tetris-theme') === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="masthead">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Bambú Tech Services</span>
+      </div>
+      <button id="theme-toggle" class="theme-toggle">Modo claro</button>
+    </header>
+
+    <h1 class="game-title">Tetris</h1>
+
+    <div class="game-container">
+      <canvas id="board" width="300" height="600"></canvas>
+
+      <aside class="panel">
+        <div class="card metrics">
+          <div class="metric">
+            <span class="label">Puntos</span>
+            <span class="value" id="score">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Líneas</span>
+            <span class="value" id="lines">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Nivel</span>
+            <span class="value" id="level">1</span>
+          </div>
+        </div>
+
+        <div class="card next">
+          <span class="label">Siguiente</span>
+          <canvas id="next-canvas" width="120" height="120"></canvas>
+        </div>
+
+        <div class="card controls">
+          <span class="label">Controles</span>
+          <ul>
+            <li><kbd>←</kbd><kbd>→</kbd> <span>Mover</span></li>
+            <li><kbd>↑</kbd> <span>Rotar</span></li>
+            <li><kbd>↓</kbd> <span>Bajar</span></li>
+            <li><kbd>Espacio</kbd> <span>Caída</span></li>
+            <li><kbd>P</kbd> <span>Pausa</span></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <div id="overlay" class="overlay hidden">
+      <div class="particles" aria-hidden="true"></div>
+      <div class="overlay-box">
+        <p id="overlay-title">Game over</p>
+        <p id="overlay-score"></p>
+        <button id="restart-btn">Jugar de nuevo</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
