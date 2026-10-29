@@ -32,8 +32,11 @@ Three files, no framework, no bundler:
 | Scoring | `LINE_SCORES = [0,100,300,500,800]` × `level`; hard drop +2/cell, soft drop +1/row |
 | Speed | `dropInterval = max(100, 1000 − (level−1) × 90)` ms; level = `floor(lines/10) + 1` |
 | Ghost piece | `ghostY()` — projects current piece down until collision; drawn at `globalAlpha = 0.22` |
-| Theming | `html.light-mode` class, applied pre-paint by an inline script in `index.html`; `isLight()` reads it, `applyTheme()` swaps `palette` between `COLORS_DARK`/`COLORS_LIGHT` |
+| Theming | `html.light-mode` class, applied pre-paint by an inline script in `index.html`; `isLight()` reads it, `applyTheme()` toggles the class and calls `syncPalette()` |
 | State flags | `paused`, `gameOver`, `animId` (RAF handle) |
+| Skins | `SKINS` — `retro` (default, current look) / `neon` / `pastel` / `pixel`; each entry has `label`, a `dark` and a `light` ramp, and its own `drawBlock(context, px, py, s, color, size)` |
+| Skin dispatch | `drawBlock()` computes padding/alpha and delegates the pixels to `SKINS[currentSkin].drawBlock`; `currentSkin` + `syncPalette()` pick the ramp for the active theme |
+| Skin persistence | `<select id="skin-select">` in the sidebar (options generated from `SKINS`, so the object is the single source of truth); saved under `tetris-skin` in `localStorage` (`loadSkin()`, inside `try/catch`); changing it re-syncs `palette` and calls `draw()` + `drawNext()` — no reload |
 
 ### Game flow
 
@@ -42,3 +45,5 @@ Three files, no framework, no bundler:
 ## Tunable constants (top of game.js)
 
 `COLS` (10), `ROWS` (20), `BLOCK` (30 px), `COLORS_DARK` / `COLORS_LIGHT` (arrays indexed 1–8, green→teal brand ramp), `LINE_SCORES`. If you change `COLS`/`ROWS`/`BLOCK`, update the canvas `width`/`height` attributes in `index.html` to match (`COLS×BLOCK` and `ROWS×BLOCK`).
+
+Skins live in the `SKINS` object (right after the two retro ramps): add an entry with `label`, a `dark` ramp, a `light` ramp (both arrays indexed 1–8) and a `drawBlock(context, px, py, s, color, size)` function — the `<option>` in `#skin-select` is generated from it. A skin that sets `shadowBlur`/`shadowColor` must wrap its drawing in `ctx.save()`/`ctx.restore()`; the generic `drawBlock()` owns padding and `globalAlpha` (the ghost is drawn at `0.22`). `draw()` wraps the active piece in a green glow, so a skin that paints detail on top of its base fill (bevels, highlights) should `save()`, zero `shadowBlur` before those passes, and `restore()`.

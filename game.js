@@ -31,11 +31,206 @@ const COLORS_LIGHT = [
   '#98A39A', // N
 ];
 
-let palette = COLORS_DARK;
-
 function isLight() {
   return document.documentElement.classList.contains('light-mode');
 }
+
+// ---- Skins ----
+// Cada skin aporta su propia rampa para modo oscuro y modo claro, y su propia
+// funcion de dibujo de bloque. `drawBlock()` delega en la skin activa.
+const SKINS = {
+  retro: {
+    label: 'Retro',
+    dark: COLORS_DARK,
+    light: COLORS_LIGHT,
+    // Estilo actual: roundRect radio 6/4, relleno plano y borde sutil.
+    drawBlock(context, px, py, s, color, size) {
+      const r = size >= 24 ? 6 : 4; // radius.sm
+      context.beginPath();
+      if (context.roundRect) {
+        context.roundRect(px, py, s, s, r);
+      } else {
+        context.rect(px, py, s, s);
+      }
+      context.fillStyle = color;
+      context.fill();
+
+      // Los bordes dan la estructura, no las sombras.
+      context.lineWidth = 1;
+      context.strokeStyle = isLight() ? 'rgba(11,17,12,0.18)' : 'rgba(255,255,255,0.18)';
+      context.stroke();
+    },
+  },
+
+  neon: {
+    label: 'Neón',
+    dark: [
+      null,
+      '#39FF14', // I - verde neon puro
+      '#00FFC6', // O - turquesa electrico
+      '#7CFF00', // T - lima fosforescente
+      '#00FF6A', // S - menta electrica
+      '#00E5FF', // Z - cian
+      '#B6FF00', // J - acido
+      '#5CFF8F', // L - verde fluorescente
+      '#C7FFE4', // N - blanco verdoso
+    ],
+    light: [
+      null,
+      '#00A80F', // I
+      '#00806A', // O
+      '#4F9E00', // T
+      '#00883A', // S
+      '#0084A0', // Z
+      '#6E8F00', // J
+      '#2E9E55', // L
+      '#5E7A68', // N
+    ],
+    // Resplandor fuerte por bloque; save/restore para no contaminar el render.
+    drawBlock(context, px, py, s, color, size) {
+      const r = size >= 24 ? 4 : 3;
+      context.save();
+      context.shadowColor = color;
+      context.shadowBlur = Math.max(6, Math.round(size * 0.5));
+      context.beginPath();
+      if (context.roundRect) {
+        context.roundRect(px, py, s, s, r);
+      } else {
+        context.rect(px, py, s, s);
+      }
+      context.fillStyle = color;
+      context.fill();
+      context.shadowBlur = 0;
+      context.lineWidth = 1.5;
+      context.strokeStyle = isLight() ? 'rgba(11,17,12,0.38)' : 'rgba(255,255,255,0.72)';
+      context.stroke();
+      context.restore();
+    },
+  },
+
+  pastel: {
+    label: 'Pastel',
+    dark: [
+      null,
+      '#A8E6A3', // I - verde pastel
+      '#A3E3DA', // O - agua
+      '#D4F0A8', // T - lima suave
+      '#BCE8C9', // S - salvia clara
+      '#8FC9C4', // Z - jade suave
+      '#9FD9A8', // J - verde polvo
+      '#E4F0C2', // L - limon palido
+      '#CBD4CB', // N - perla
+    ],
+    light: [
+      null,
+      '#6FB873', // I
+      '#63B5AA', // O
+      '#9DC56A', // T
+      '#86BE95', // S
+      '#4F938D', // Z
+      '#6AAE77', // J
+      '#AFC47F', // L
+      '#97A397', // N
+    ],
+    // Esquinas muy redondeadas y brillo interior suave.
+    drawBlock(context, px, py, s, color, size) {
+      const r = Math.min(s / 2, size >= 24 ? 12 : 7); // radius.lg
+      context.save();
+      context.beginPath();
+      if (context.roundRect) {
+        context.roundRect(px, py, s, s, r);
+      } else {
+        context.rect(px, py, s, s);
+      }
+      context.fillStyle = color;
+      context.fill();
+      context.lineWidth = 1;
+      context.strokeStyle = isLight() ? 'rgba(11,17,12,0.12)' : 'rgba(255,255,255,0.30)';
+      context.stroke();
+
+      // Brillo superior: un arco claro pegado al borde de arriba. Sin sombra
+      // heredada, para que el resplandor de la pieza activa no lo difumine.
+      context.shadowBlur = 0;
+      const inset = Math.max(2, Math.round(size * 0.14));
+      context.beginPath();
+      if (context.roundRect) {
+        context.roundRect(px + inset, py + inset, s - inset * 2, (s - inset * 2) / 2, r / 2);
+      } else {
+        context.rect(px + inset, py + inset, s - inset * 2, (s - inset * 2) / 2);
+      }
+      context.fillStyle = 'rgba(255,255,255,0.28)';
+      context.fill();
+      context.restore();
+    },
+  },
+
+  pixel: {
+    label: 'Pixel art',
+    dark: [
+      null,
+      '#2ECC40', // I - verde 8 bits
+      '#1FB38F', // O - teal 8 bits
+      '#5FD67A', // T - verde claro
+      '#149C3F', // S - verde medio
+      '#0E7A6B', // Z - teal profundo
+      '#0B6B2C', // J - verde bosque
+      '#8CC63F', // L - lima
+      '#4A5A4C', // N - tuerca
+    ],
+    light: [
+      null,
+      '#1FA62F', // I
+      '#13866B', // O
+      '#3FAE57', // T
+      '#0E7C30', // S
+      '#0A5F53', // Z
+      '#07541F', // J
+      '#6F9E2C', // L
+      '#3C4A3E', // N
+    ],
+    // Bloque cuadrado con bisel y dither de 2-3 px.
+    drawBlock(context, px, py, s, color, size) {
+      const u = Math.max(2, Math.round(size / 10)); // unidad de pixel
+      context.save();
+      context.fillStyle = color;
+      context.fillRect(px, py, s, s);
+
+      // Bisel y dither sin sombra heredada: el resplandor de la pieza activa
+      // solo debe rodear el bloque, no emborronar su textura.
+      context.shadowBlur = 0;
+      context.fillStyle = 'rgba(255,255,255,0.38)';
+      context.fillRect(px, py, s, u);
+      context.fillRect(px, py, u, s);
+      context.fillStyle = 'rgba(0,0,0,0.32)';
+      context.fillRect(px, py + s - u, s, u);
+      context.fillRect(px + s - u, py, u, s);
+
+      // Dither diagonal en el interior.
+      context.fillStyle = 'rgba(255,255,255,0.20)';
+      for (let i = u * 2; i < s - u * 2; i += u * 2) {
+        context.fillRect(px + i, py + i, u, u);
+      }
+      context.fillStyle = 'rgba(0,0,0,0.18)';
+      for (let i = u * 2; i < s - u * 2; i += u * 2) {
+        context.fillRect(px + s - u - i, py + i, u, u);
+      }
+      context.restore();
+    },
+  },
+};
+
+const DEFAULT_SKIN = 'retro';
+
+function loadSkin() {
+  try {
+    const saved = localStorage.getItem('tetris-skin');
+    if (saved && SKINS[saved]) return saved;
+  } catch (e) {}
+  return DEFAULT_SKIN;
+}
+
+let currentSkin = loadSkin();
+let palette = SKINS[currentSkin].dark;
 
 const PIECES = [
   null,
@@ -62,6 +257,7 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const skinSelect = document.getElementById('skin-select');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
@@ -185,23 +381,11 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   const px = x * size + pad;
   const py = y * size + pad;
   const s = size - pad * 2;
-  const r = size >= 24 ? 6 : 4; // radius.sm
+  const prevAlpha = context.globalAlpha;
 
   context.globalAlpha = alpha ?? 1;
-  context.beginPath();
-  if (context.roundRect) {
-    context.roundRect(px, py, s, s, r);
-  } else {
-    context.rect(px, py, s, s);
-  }
-  context.fillStyle = palette[colorIndex];
-  context.fill();
-
-  // Los bordes dan la estructura, no las sombras.
-  context.lineWidth = 1;
-  context.strokeStyle = isLight() ? 'rgba(11,17,12,0.18)' : 'rgba(255,255,255,0.18)';
-  context.stroke();
-  context.globalAlpha = 1;
+  SKINS[currentSkin].drawBlock(context, px, py, s, palette[colorIndex], size);
+  context.globalAlpha = prevAlpha;
 }
 
 function drawGrid() {
@@ -346,10 +530,15 @@ restartBtn.addEventListener('click', init);
 
 const themeToggle = document.getElementById('theme-toggle');
 
+// La rampa activa depende de la skin elegida y del tema (oscuro/claro).
+function syncPalette() {
+  palette = isLight() ? SKINS[currentSkin].light : SKINS[currentSkin].dark;
+}
+
 function applyTheme(light) {
   document.documentElement.classList.toggle('light-mode', light);
   themeToggle.textContent = light ? 'Modo oscuro' : 'Modo claro';
-  palette = light ? COLORS_LIGHT : COLORS_DARK;
+  syncPalette();
 }
 
 const savedTheme = localStorage.getItem('tetris-theme');
@@ -363,6 +552,29 @@ themeToggle.addEventListener('click', () => {
     draw();
     drawNext();
   }
+});
+
+// ---- Selector de skin ----
+// Las opciones salen de SKINS: una sola fuente de verdad para claves y nombres.
+for (const name of Object.keys(SKINS)) {
+  const option = document.createElement('option');
+  option.value = name;
+  option.textContent = SKINS[name].label;
+  skinSelect.appendChild(option);
+}
+skinSelect.value = currentSkin;
+
+skinSelect.addEventListener('change', () => {
+  const name = skinSelect.value;
+  if (!SKINS[name]) return;
+  currentSkin = name;
+  syncPalette();
+  try {
+    localStorage.setItem('tetris-skin', name);
+  } catch (e) {}
+  // Se repinta siempre: tras un game over el tablero sigue visible bajo el overlay.
+  draw();
+  drawNext();
 });
 
 init();
