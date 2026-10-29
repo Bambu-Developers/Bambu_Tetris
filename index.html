@@ -57,10 +57,45 @@
             <li><kbd>↑</kbd> <span>Rotar</span></li>
             <li><kbd>↓</kbd> <span>Bajar</span></li>
             <li><kbd>Espacio</kbd> <span>Caída</span></li>
-            <li><kbd>P</kbd> <span>Pausa</span></li>
+            <li><kbd>P</kbd><kbd>Esc</kbd> <span>Pausa</span></li>
           </ul>
         </div>
       </aside>
+    </div>
+
+    <div id="pause-overlay" class="overlay hidden">
+      <div class="particles" aria-hidden="true"></div>
+      <div class="overlay-box pause-box" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+        <div id="pause-main" class="pause-view">
+          <p id="pause-title" class="overlay-heading">Pausa</p>
+
+          <div class="pause-field">
+            <label class="label" for="start-level">Nivel inicial</label>
+            <select id="start-level"></select>
+            <span class="pause-hint">Se aplica al empezar una partida nueva.</span>
+          </div>
+
+          <div class="pause-actions">
+            <button id="resume-btn" class="pause-btn is-primary">Reanudar</button>
+            <button id="pause-restart-btn" class="pause-btn">Reiniciar</button>
+            <button id="pause-controls-btn" class="pause-btn">Ver controles</button>
+          </div>
+        </div>
+
+        <div id="pause-controls" class="pause-view hidden">
+          <p class="overlay-heading">Controles</p>
+          <ul class="pause-keys">
+            <li><kbd>←</kbd><kbd>→</kbd> <span>Mover</span></li>
+            <li><kbd>↑</kbd> <span>Rotar</span></li>
+            <li><kbd>↓</kbd> <span>Bajar</span></li>
+            <li><kbd>Espacio</kbd> <span>Caída</span></li>
+            <li><kbd>P</kbd><kbd>Esc</kbd> <span>Pausa</span></li>
+          </ul>
+          <div class="pause-actions">
+            <button id="pause-back-btn" class="pause-btn is-primary">Volver</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="overlay" class="overlay hidden">
